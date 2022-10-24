@@ -1,6 +1,9 @@
 #include "rectitem.h"
 #include <QPen>
 #include <QBrushData>
+
+const float RectItem::SPEED = 5.0f;
+
 RectItem::RectItem(int number)
     : SIZE(30), HIGHLIGHT_COLOR(Qt::red), NORMAL_COLOR(Qt::yellow), m_isHighlighted(false)
 {

@@ -30,6 +30,7 @@ private:
     const float loopSpeed;
     void drawSpline();
     QVector<QPoint> m_splitPoints;
+    bool m_leftArrowPressed, m_rightArrowPressed, m_upArrowPressed, m_downArrowPressed;
 private slots:
     void loop();
     // QGraphicsScene interface

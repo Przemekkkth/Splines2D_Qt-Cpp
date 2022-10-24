@@ -14,6 +14,7 @@ public:
     void setNormalMode();
     bool isHighlighted();
     void setPos(int x, int y);
+    static const float SPEED;
 signals:
 
 

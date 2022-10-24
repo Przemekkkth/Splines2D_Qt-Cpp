@@ -3,7 +3,7 @@
 
 Scene::Scene(QObject *parent)
     : QGraphicsScene{parent}, RESOLUTION(1024, 500), FPS(60), SPLIT_SIZE(5), nSelectedPoint(0),
-      loopSpeed(int(1000.0f/FPS))
+      loopSpeed(int(1000.0f/FPS)), m_leftArrowPressed(false), m_rightArrowPressed(false), m_upArrowPressed(false), m_downArrowPressed(false)
 {
     setSceneRect(0,0, RESOLUTION.width(), RESOLUTION.height());
     loopTime = 0.0f;
@@ -89,22 +89,22 @@ void Scene::keyPressEvent(QKeyEvent *event)
         switch (event->key()) {
         case Qt::Key_Left:
         {
-
+            m_leftArrowPressed = true;
         }
             break;
         case Qt::Key_Right:
         {
-
+            m_rightArrowPressed = true;
         }
             break;
         case Qt::Key_Up:
         {
-
+            m_upArrowPressed = true;
         }
             break;
         case Qt::Key_Down:
         {
-
+            m_downArrowPressed = true;
         }
             break;
         }
@@ -117,22 +117,22 @@ void Scene::keyReleaseEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Left:
     {
-
+        m_leftArrowPressed = false;
     }
         break;
     case Qt::Key_Right:
     {
-
+        m_rightArrowPressed = false;
     }
         break;
     case Qt::Key_Up:
     {
-
+        m_upArrowPressed = false;
     }
         break;
     case Qt::Key_Down:
     {
-
+        m_downArrowPressed = false;
     }
         break;
     }
@@ -150,5 +150,21 @@ void Scene::loop()
     {
         loopTime -= loopSpeed;
         //qDebug() << "loop()";
+        if(m_leftArrowPressed)
+        {
+            rectItems[nSelectedPoint]->moveBy(-RectItem::SPEED, 0);
+        }
+        else if(m_rightArrowPressed)
+        {
+            rectItems[nSelectedPoint]->moveBy(+RectItem::SPEED, 0);
+        }
+        else if(m_upArrowPressed)
+        {
+            rectItems[nSelectedPoint]->moveBy(0, -RectItem::SPEED);
+        }
+        else if(m_downArrowPressed)
+        {
+            rectItems[nSelectedPoint]->moveBy(0, +RectItem::SPEED);
+        }
     }
 }
