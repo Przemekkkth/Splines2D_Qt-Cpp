@@ -35,6 +35,7 @@ private slots:
     // QGraphicsScene interface
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
+    virtual void keyReleaseEvent(QKeyEvent *event) override;
 };
 
 #endif // SCENE_H

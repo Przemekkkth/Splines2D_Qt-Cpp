@@ -47,7 +47,7 @@ Point2D Spline::GetSplinePoint(float t, bool bLooped)
     float tx = 0.5f * (points[p0].x * q1 + points[p1].x * q2 + points[p2].x * q3 + points[p3].x * q4);
     float ty = 0.5f * (points[p0].y * q1 + points[p1].y * q2 + points[p2].y * q3 + points[p3].y * q4);
 
-    return{ 10.0f*tx, 10.0f*ty };
+    return{ tx, ty };
 }
 
 Point2D Spline::GetSplineGradient(float t, bool bLooped)
