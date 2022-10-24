@@ -11,7 +11,7 @@ Scene::Scene(QObject *parent)
 
 //    path.points = { { 5, 25 },{ 15, 25 },{ 25, 25 },{ 35, 25 },{ 45, 25 },{ 55, 25 },{ 65, 25 },{ 75, 25 },{ 85, 25 },{ 95, 25 } };
 
-    path.points = { { 5, 25 },{ 15, 25 }, { 25, 25 }};//,{ 35, 25 },{ 45, 25 },{ 55, 25 },{ 65, 25 },{ 75, 25 },{ 85, 25 },{ 95, 25 } };
+    path.points = { { 5, 25 },{ 15, 20 }, { 25, 25 }};//,{ 35, 25 },{ 45, 25 },{ 55, 25 },{ 65, 25 },{ 75, 25 },{ 85, 25 },{ 95, 25 } };
 
 
     for(int i = 0; i < path.points.size(); ++i)
@@ -19,6 +19,7 @@ Scene::Scene(QObject *parent)
         RectItem* rI = new RectItem(i);
         addItem(rI);
         rI->setPos(path.points[i].x*10, path.points[i].y*10);
+        qDebug() << rI->pos();
         rectItems.append(rI);
     }
 
@@ -32,7 +33,7 @@ Scene::Scene(QObject *parent)
     timer.start(int(1000.0f/FPS));
     elapsedTimer.start();
     setBackgroundBrush(QBrush(Qt::black));
-    //drawSpline();
+    drawSpline();
 }
 
 void Scene::drawSpline()
@@ -43,7 +44,7 @@ void Scene::drawSpline()
         if(!m_splitPoints.contains(QPoint(int(pos.x)*10, int(pos.y)*10)))
         {
             m_splitPoints.push_back(QPoint(int(pos.x)*10, int(pos.y)*10));
-            QGraphicsRectItem* rItem = new QGraphicsRectItem(0,0, SPLIT_SIZE, SPLIT_SIZE);
+            QGraphicsRectItem* rItem = new QGraphicsRectItem(-SPLIT_SIZE/2, -SPLIT_SIZE/2, SPLIT_SIZE, SPLIT_SIZE);
             qDebug() << "x " << int(pos.x) << " y " << int(pos.y);
             rItem->setPos(int(pos.x), int(pos.y));
             rItem->setBrush(QBrush(QColor(Qt::white)));

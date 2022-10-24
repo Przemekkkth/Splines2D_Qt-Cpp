@@ -7,9 +7,9 @@ RectItem::RectItem(int number)
     setNormalMode();
     QGraphicsSimpleTextItem* text = new QGraphicsSimpleTextItem("1",this);
     text->setText(QString::number(number));
-    text->setPos(QPoint(0,0)-QPoint(text->boundingRect().width()/2, text->boundingRect().height()/2));
+    text->setPos(boundingRect().center() - QPoint(text->boundingRect().width()/2, text->boundingRect().height()/2));
     setPos(100, 100);
-    setRect(-boundingRect().width()/2, -boundingRect().height()/2, boundingRect().width(), boundingRect().height());
+    setRect(0, 0, boundingRect().width(), boundingRect().height());
 }
 
 void RectItem::setHighlight()
@@ -29,6 +29,11 @@ void RectItem::setNormalMode()
 bool RectItem::isHighlighted()
 {
     return m_isHighlighted;
+}
+
+void RectItem::setPos(int x, int y)
+{
+    QGraphicsRectItem::setPos(x-boundingRect().width()/2, y - boundingRect().height()/2);
 }
 
 QRectF RectItem::boundingRect() const

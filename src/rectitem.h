@@ -13,6 +13,7 @@ public:
     void setHighlight();
     void setNormalMode();
     bool isHighlighted();
+    void setPos(int x, int y);
 signals:
 
 
