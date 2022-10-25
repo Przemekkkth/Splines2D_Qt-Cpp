@@ -1,14 +1,6 @@
 #include "scene.h"
 #include <QKeyEvent>
 
-void Scene::drawMarker()
-{
-    Point2D p1 = path.GetSplinePoint(fMarker, true);
-    Point2D g1 = path.GetSplineGradient(fMarker, true);
-    //qDebug() << "p1 " << p1.x << "," << p1.y << " g1 " << g1.x << "," << g1.y;
-    float r = atan2(-g1.y, g1.x);
-    m_markerItem->setLine(25.0f * sin(r) + p1.x, 25.0f * cos(r) + p1.y, -25.0f * sin(r) + p1.x, -25.0f * cos(r) + p1.y);
-}
 
 Scene::Scene(QObject *parent)
     : QGraphicsScene{parent}, RESOLUTION(1024, 500), FPS(60), SPLIT_SIZE(5), nSelectedPoint(0),
@@ -19,10 +11,11 @@ Scene::Scene(QObject *parent)
     loopTime = 0.0f;
     deltaTime = 0.0f;
 
-    path.points = { { 50, 250 },{ 100, 150 },{ 150, 30 },{ 200, 120 },{ 300, 130 },{ 300, 200 },{ 900, 450 },{ 500, 350 },{ 300, 400 },{ 150, 200 } };
-
-    //path.points = { { 50, 250 },{ 150, 200 }, { 250, 200} ,{ 350, 250 }};//,{ 55, 25 },{ 65, 25 },{ 75, 25 },{ 85, 25 },{ 95, 25 } };
-
+    for (int i = 0; i < 10; i++)
+    {
+        path.points.push_back({ 150.0f * sinf((float)i / 10.0f * 3.14159f * 2.0f) + RESOLUTION.width() / 2,
+                                150.0f * cosf((float)i / 10.0f * 3.14159f * 2.0f) + RESOLUTION.height()/ 2 });
+    }
 
     for(int i = 0; i < path.points.size(); ++i)
     {
@@ -52,6 +45,16 @@ Scene::Scene(QObject *parent)
     m_markerItem->setPen(markerPen);
     drawMarker();
 }
+
+void Scene::drawMarker()
+{
+    Point2D p1 = path.GetSplinePoint(fMarker, true);
+    Point2D g1 = path.GetSplineGradient(fMarker, true);
+    //qDebug() << "p1 " << p1.x << "," << p1.y << " g1 " << g1.x << "," << g1.y;
+    float r = atan2(-g1.y, g1.x);
+    m_markerItem->setLine(25.0f * sin(r) + p1.x, 25.0f * cos(r) + p1.y, -25.0f * sin(r) + p1.x, -25.0f * cos(r) + p1.y);
+}
+
 
 void Scene::clearSplines()
 {
