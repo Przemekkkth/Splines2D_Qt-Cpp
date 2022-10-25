@@ -36,7 +36,16 @@ bool RectItem::isHighlighted()
 
 void RectItem::setPos(int x, int y)
 {
+    //Func setPos sets pos for center of rect
     QGraphicsRectItem::setPos(x-boundingRect().width()/2, y - boundingRect().height()/2);
+}
+
+QPoint RectItem::pos() const
+{
+    QPointF p = QGraphicsRectItem::pos();
+    p.setX(p.x() + boundingRect().width()/2);
+    p.setY(p.y() + boundingRect().height()/2);
+    return p.toPoint();
 }
 
 QRectF RectItem::boundingRect() const

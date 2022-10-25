@@ -35,6 +35,23 @@ Scene::Scene(QObject *parent)
     drawSpline();
 }
 
+void Scene::clearSplines()
+{
+    if(m_splitPoints.size())
+    {
+        m_splitPoints.clear();
+    }
+    if(m_splineRects.size())
+    {
+        for(int i = 0; i < m_splineRects.size(); ++i)
+        {
+            removeItem(m_splineRects[i]);
+        }
+    }
+    m_splineRects.clear();
+
+}
+
 void Scene::drawSpline()
 {
     for (float t = 0; t < (float)path.points.size(); t += 0.005f)
@@ -49,6 +66,7 @@ void Scene::drawSpline()
             rItem->setBrush(QBrush(QColor(Qt::white)));
             rItem->setPen(QPen(QColor(Qt::white)));
             addItem(rItem);
+            m_splineRects.push_back(rItem);
         }
     }
 }
@@ -153,18 +171,34 @@ void Scene::loop()
         if(m_leftArrowPressed)
         {
             rectItems[nSelectedPoint]->moveBy(-RectItem::SPEED, 0);
+            path.points[nSelectedPoint].x = rectItems[nSelectedPoint]->pos().x();
+            path.points[nSelectedPoint].y = rectItems[nSelectedPoint]->pos().y();
+            clearSplines();
+            drawSpline();
         }
         else if(m_rightArrowPressed)
         {
             rectItems[nSelectedPoint]->moveBy(+RectItem::SPEED, 0);
+            path.points[nSelectedPoint].x = rectItems[nSelectedPoint]->pos().x();
+            path.points[nSelectedPoint].y = rectItems[nSelectedPoint]->pos().y();
+            clearSplines();
+            drawSpline();
         }
         else if(m_upArrowPressed)
         {
             rectItems[nSelectedPoint]->moveBy(0, -RectItem::SPEED);
+            path.points[nSelectedPoint].x = rectItems[nSelectedPoint]->pos().x();
+            path.points[nSelectedPoint].y = rectItems[nSelectedPoint]->pos().y();
+            clearSplines();
+            drawSpline();
         }
         else if(m_downArrowPressed)
         {
             rectItems[nSelectedPoint]->moveBy(0, +RectItem::SPEED);
+            path.points[nSelectedPoint].x = rectItems[nSelectedPoint]->pos().x();
+            path.points[nSelectedPoint].y = rectItems[nSelectedPoint]->pos().y();
+            clearSplines();
+            drawSpline();
         }
     }
 }

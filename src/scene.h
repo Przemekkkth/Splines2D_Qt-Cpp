@@ -18,10 +18,12 @@ signals:
 
 
 private:
+    void clearSplines();
     const QSize RESOLUTION;
     const int FPS;
     const int SPLIT_SIZE;
     QVector<RectItem*> rectItems;
+    QVector<QGraphicsRectItem*> m_splineRects;
     Spline path;
     int nSelectedPoint;
     QElapsedTimer elapsedTimer;
