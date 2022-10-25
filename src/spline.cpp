@@ -56,9 +56,25 @@ Point2D Spline::GetSplineGradient(float t, bool bLooped)
     if (!bLooped)
     {
         p1 = (int)t + 1;
+        if(p1 >= points.size())
+        {
+            p1 = points.size()-1;
+        }
         p2 = p1 + 1;
+        if(p2 >= points.size())
+        {
+            p2 = points.size()-1;
+        }
         p3 = p2 + 1;
+        if(p3 >= points.size())
+        {
+            p3 = points.size()-1;
+        }
         p0 = p1 - 1;
+        if(p0 >= points.size())
+        {
+            p1 = points.size()-1;
+        }
     }
     else
     {
