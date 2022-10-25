@@ -1,9 +1,19 @@
 #include "scene.h"
 #include <QKeyEvent>
 
+void Scene::drawMarker()
+{
+    Point2D p1 = path.GetSplinePoint(fMarker, true);
+    Point2D g1 = path.GetSplineGradient(fMarker, true);
+    //qDebug() << "p1 " << p1.x << "," << p1.y << " g1 " << g1.x << "," << g1.y;
+    float r = atan2(-g1.y, g1.x);
+    m_markerItem->setLine(25.0f * sin(r) + p1.x, 25.0f * cos(r) + p1.y, -25.0f * sin(r) + p1.x, -25.0f * cos(r) + p1.y);
+}
+
 Scene::Scene(QObject *parent)
     : QGraphicsScene{parent}, RESOLUTION(1024, 500), FPS(60), SPLIT_SIZE(5), nSelectedPoint(0),
-      loopSpeed(int(1000.0f/FPS)), m_leftArrowPressed(false), m_rightArrowPressed(false), m_upArrowPressed(false), m_downArrowPressed(false)
+      loopSpeed(int(1000.0f/FPS)), m_leftArrowPressed(false), m_rightArrowPressed(false), m_upArrowPressed(false), m_downArrowPressed(false),
+      m_aKeyPressed(false), m_sKeyPressed(false), fMarker(0.0f)
 {
     setSceneRect(0,0, RESOLUTION.width(), RESOLUTION.height());
     loopTime = 0.0f;
@@ -33,6 +43,14 @@ Scene::Scene(QObject *parent)
     elapsedTimer.start();
     setBackgroundBrush(QBrush(Qt::black));
     drawSpline();
+
+    m_markerItem = new QGraphicsLineItem();
+    addItem(m_markerItem);
+    QPen markerPen;
+    markerPen.setBrush(QColor(Qt::blue));
+    markerPen.setWidth(5);
+    m_markerItem->setPen(markerPen);
+    drawMarker();
 }
 
 void Scene::clearSplines()
@@ -125,6 +143,16 @@ void Scene::keyPressEvent(QKeyEvent *event)
             m_downArrowPressed = true;
         }
             break;
+        case Qt::Key_A:
+        {
+            m_aKeyPressed = true;
+        }
+            break;
+        case Qt::Key_S:
+        {
+            m_sKeyPressed = true;
+        }
+            break;
         }
     }
     QGraphicsScene::keyPressEvent(event);
@@ -153,6 +181,16 @@ void Scene::keyReleaseEvent(QKeyEvent *event)
         m_downArrowPressed = false;
     }
         break;
+    case Qt::Key_A:
+    {
+        m_aKeyPressed = false;
+    }
+        break;
+    case Qt::Key_S:
+    {
+        m_sKeyPressed = false;
+    }
+        break;
     }
 
     QGraphicsScene::keyReleaseEvent(event);
@@ -167,7 +205,6 @@ void Scene::loop()
     if( loopTime > loopSpeed)
     {
         loopTime -= loopSpeed;
-        //qDebug() << "loop()";
         if(m_leftArrowPressed)
         {
             rectItems[nSelectedPoint]->moveBy(-RectItem::SPEED, 0);
@@ -200,5 +237,26 @@ void Scene::loop()
             clearSplines();
             drawSpline();
         }
+
+        if(m_aKeyPressed)
+        {
+            fMarker -= 0.05f;
+        }
+        else if(m_sKeyPressed)
+        {
+            fMarker += 0.05f;
+        }
+
+        if (fMarker >= (float)path.points.size())
+        {
+            fMarker -= (float)path.points.size();
+        }
+
+        if (fMarker < 0.0f)
+        {
+            fMarker += (float)path.points.size();
+        }
+
+        drawMarker();
     }
 }

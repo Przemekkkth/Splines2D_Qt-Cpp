@@ -5,6 +5,7 @@
 #include <QSize>
 #include <QTimer>
 #include <QElapsedTimer>
+#include <QGraphicsLineItem>
 #include "rectitem.h"
 #include "spline.h"
 
@@ -33,6 +34,11 @@ private:
     void drawSpline();
     QVector<QPoint> m_splitPoints;
     bool m_leftArrowPressed, m_rightArrowPressed, m_upArrowPressed, m_downArrowPressed;
+    bool m_aKeyPressed, m_sKeyPressed;
+    float fMarker;
+    QGraphicsLineItem* m_markerItem;
+    void drawMarker();
+
 private slots:
     void loop();
     // QGraphicsScene interface
