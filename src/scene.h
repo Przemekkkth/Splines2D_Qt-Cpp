@@ -38,7 +38,7 @@ private:
     float fMarker;
     QGraphicsLineItem* m_markerItem;
     void drawMarker();
-
+    void renderScene();
 private slots:
     void loop();
     // QGraphicsScene interface

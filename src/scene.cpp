@@ -1,6 +1,7 @@
 #include "scene.h"
 #include <QKeyEvent>
-
+#include <QDir>
+#include <QPainter>
 
 Scene::Scene(QObject *parent)
     : QGraphicsScene{parent}, RESOLUTION(1024, 500), FPS(60), SPLIT_SIZE(5), nSelectedPoint(0),
@@ -11,10 +12,13 @@ Scene::Scene(QObject *parent)
     loopTime = 0.0f;
     deltaTime = 0.0f;
 
+    path.fTotalSplineLength = 0.0f;
+
     for (int i = 0; i < 10; i++)
     {
         path.points.push_back({ 150.0f * sinf((float)i / 10.0f * 3.14159f * 2.0f) + RESOLUTION.width() / 2,
-                                150.0f * cosf((float)i / 10.0f * 3.14159f * 2.0f) + RESOLUTION.height()/ 2 });
+                                150.0f * cosf((float)i / 10.0f * 3.14159f * 2.0f) + RESOLUTION.height()/ 2,
+                              0.0f});
     }
 
     for(int i = 0; i < path.points.size(); ++i)
@@ -43,18 +47,29 @@ Scene::Scene(QObject *parent)
     markerPen.setBrush(QColor(Qt::blue));
     markerPen.setWidth(5);
     m_markerItem->setPen(markerPen);
-    drawMarker();
 }
 
 void Scene::drawMarker()
 {
-    Point2D p1 = path.GetSplinePoint(fMarker, true);
-    Point2D g1 = path.GetSplineGradient(fMarker, true);
-    //qDebug() << "p1 " << p1.x << "," << p1.y << " g1 " << g1.x << "," << g1.y;
+    float fOffset = path.GetNormalisedOffset(fMarker);
+    Point2D p1 = path.GetSplinePoint(fOffset, true);
+    Point2D g1 = path.GetSplineGradient(fOffset, true);
     float r = atan2(-g1.y, g1.x);
     m_markerItem->setLine(25.0f * sin(r) + p1.x, 25.0f * cos(r) + p1.y, -25.0f * sin(r) + p1.x, -25.0f * cos(r) + p1.y);
 }
 
+void Scene::renderScene()
+{
+    static int index = 0;
+    QString fileName = QDir::currentPath() + QDir::separator() + "screen" + QString::number(index++) + ".png";
+    QRect rect = sceneRect().toAlignedRect();
+    QImage image(rect.size(), QImage::Format_ARGB32);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    render(&painter);
+    image.save(fileName);
+    qDebug() << "saved " << fileName;
+}
 
 void Scene::clearSplines()
 {
@@ -75,6 +90,7 @@ void Scene::clearSplines()
 
 void Scene::drawSpline()
 {
+    path.fTotalSplineLength = 0.0f;
     for (float t = 0; t < (float)path.points.size(); t += 0.005f)
     {
         Point2D pos = path.GetSplinePoint(t, true);
@@ -194,6 +210,11 @@ void Scene::keyReleaseEvent(QKeyEvent *event)
         m_sKeyPressed = false;
     }
         break;
+    case Qt::Key_P:
+    {
+        renderScene();
+    }
+        break;
     }
 
     QGraphicsScene::keyReleaseEvent(event);
@@ -243,22 +264,34 @@ void Scene::loop()
 
         if(m_aKeyPressed)
         {
-            fMarker -= 0.05f;
+            fMarker -= 2.5f;
         }
         else if(m_sKeyPressed)
         {
-            fMarker += 0.05f;
+            fMarker += 2.5f;
         }
 
-        if (fMarker >= (float)path.points.size())
+        if (fMarker >= (float)path.fTotalSplineLength)
         {
-            fMarker -= (float)path.points.size();
+            fMarker -= (float)path.fTotalSplineLength;
         }
 
         if (fMarker < 0.0f)
         {
-            fMarker += (float)path.points.size();
+            fMarker += (float)path.fTotalSplineLength;
         }
+
+
+        path.fTotalSplineLength = 0.0f;
+
+        // Draw Control Points
+        for (int i = 0; i < path.points.size(); i++)
+        {
+            path.points[i].length = path.CalculateSegmentLength(i, true);
+            //qDebug() << "path.points[" << i << "] = " << path.points[i].length;
+            path.fTotalSplineLength += path.points[i].length;
+        }
+
 
         drawMarker();
     }
