@@ -6,14 +6,21 @@ struct Point2D
 {
     float x;
     float y;
+    float length;
 };
 
 struct Spline
 {
-    QVector<Point2D> points;
+    Spline();
 
     Point2D GetSplinePoint(float t, bool bLooped = false);
     Point2D GetSplineGradient(float t, bool bLooped = false);
+    float CalculateSegmentLength(int node, bool bLooped = false);
+    float GetNormalisedOffset(float p);
+
+
+    QVector<Point2D> points;
+    float fTotalSplineLength;
 };
 
 #endif // SPLINE_H
